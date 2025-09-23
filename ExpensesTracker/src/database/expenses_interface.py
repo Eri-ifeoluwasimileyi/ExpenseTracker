@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.schemas.expense_schemas import DeleteExpense, AddExpense, UpdateExpense
+from src.schemas.expense_schemas import AddExpense
 
 
 class ExpensesInterface(ABC):

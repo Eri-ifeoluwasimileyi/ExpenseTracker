@@ -11,47 +11,36 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 
 @user_bp.route('/register', methods=['POST'])
 def register():
-    try:
-        data = request.json
-        user = CreateUser(**data)
-        user_service = get_user_service()
-        user_data = user_service.register_user(user)
-        return jsonify({
-            'user_id': user_data['id'],
-            'email': user_data['email'],
-        })
-
-    except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+    data = request.json
+    user = CreateUser(**data)
+    user_service = get_user_service()
+    user_data = user_service.register_user(user)
+    return jsonify({
+        'user_id': user_data['id'],
+        'email': user_data['email'],
+    })
 
 
 @user_bp.route('/login', methods=['POST'])
 def login():
-    try:
-        data = request.json
-        user = LoginUser(**data)
-        user_service = get_user_service()
-        user_data = user_service.verify_user(user)
-        access_token = create_access_token(identity=user_data['id'])
-        return jsonify(access_token=access_token), 200
+    data = request.json
+    user = LoginUser(**data)
+    user_service = get_user_service()
+    user_data = user_service.verify_user(user)
+    access_token = create_access_token(identity=user_data['id'])
+    return jsonify(access_token=access_token), 200
 
-    except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
 
 
 @user_bp.route('/update', methods=['PATCH'])
 @jwt_required()
 def update():
     current_login_id = get_jwt_identity()
-    try:
-        update_user_data = request.json
-        update_user = UpdateUser(id=current_login_id, **update_user_data)
-        user_service = get_user_service()
-        user_data = user_service.update_user(update_user)
-        return jsonify(user_data), 200
-
-    except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+    update_user_data = request.json
+    update_user = UpdateUser(id=current_login_id, **update_user_data)
+    user_service = get_user_service()
+    user_data = user_service.update_user(update_user)
+    return jsonify(user_data), 200
 
 
 @user_bp.route("/balance", methods=["PATCH"])

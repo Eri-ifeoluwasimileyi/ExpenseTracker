@@ -1,5 +1,7 @@
 from flask import abort
 
+from exceptions.user_exceptions import UserNotFoundError, InvalidAmountError, UserAlreadyExistsError, \
+    IncorrectPasswordError
 from src.database.user_interface import UserInterface
 from src.schemas.user_schemas import CreateUser, UpdateUser, LoginUser
 from src.utils.password import hash_password, verify_password
@@ -18,13 +20,13 @@ class UserService:
     def verify_user(self, user: LoginUser):
         found_user = self.users.get_user_by_email(user.email)
         if found_user is None:
-            abort(404, 'User not found')
+            raise UserNotFoundError('User not found', 404)
         if verify_password(
                 plain_password=user.password,
                 hashed_password=found_user['password']
         ):
             return found_user
-        abort(401, 'Incorrect password')
+        raise IncorrectPasswordError('Incorrect password', 404)
 
     def update_user(self, update_user: UpdateUser):
         if update_user.email is not None:
@@ -38,17 +40,17 @@ class UserService:
     def get_user(self, user_id: str):
         user = self.users.get_user_by_id(user_id)
         if user is None:
-            abort(404, f"User {user_id} not found")
+            raise UserNotFoundError(f"User {user_id} not found", 404)
         return user
 
 
     def fund_user_balance(self, user_id: str, amount: float):
         user_data = self.users.get_user_by_id(user_id)
         if not user_data:
-            abort(404, "User not found")
+            raise UserNotFoundError("User not found", 404)
 
         if amount <= 0:
-            abort(400, "Funding amount must be greater than zero")
+            raise InvalidAmountError("Funding amount must be greater than zero", 404)
 
         new_balance = user_data["initial_balance"] + amount
         self.users.update_balance(user_id=user_id, new_balance=new_balance)
@@ -60,7 +62,7 @@ class UserService:
 
     def __check_email(self, email: str):
         if self.users.get_user_by_email(email) is not None:
-            abort(400, "Email already registered")
+            raise UserAlreadyExistsError(f"User {email} already exists", 400)
 
     def blacklist_token(self, token: str):
         self.users.user_blacklist_token(token)
