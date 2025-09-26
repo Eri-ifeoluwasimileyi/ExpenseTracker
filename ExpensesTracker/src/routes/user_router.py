@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
-from pydantic import ValidationError
 
 from config.extensions import jwt
 from src.config.injections import get_user_service
@@ -31,7 +30,6 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
-
 @user_bp.route('/update', methods=['PATCH'])
 @jwt_required()
 def update():
@@ -52,6 +50,41 @@ def fund_user_balance():
     user_service = get_user_service()
     result = user_service.fund_user_balance(current_user_id, float(amount))
     return jsonify(result), 200
+
+
+@user_bp.route("/budget/set", methods=["POST"])
+@jwt_required()
+def set_budget():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+
+    category = data.get("category")
+    amount = data.get("amount")
+
+    if not category or amount is None:
+        return jsonify({"error": "Category and amount are required"}), 400
+
+    user_service = get_user_service()
+    result = user_service.set_budget(current_user_id, category, float(amount))
+
+    return jsonify(result), 200
+
+@user_bp.route("/budget", methods=["GET"])
+@jwt_required()
+def get_budgets():
+    current_user_id = get_jwt_identity()
+    user_service = get_user_service()
+    budgets = user_service.get_budgets(current_user_id)
+    return jsonify(budgets), 200
+
+
+@user_bp.route("/budget/usage", methods=["GET"])
+@jwt_required()
+def get_budget_usage():
+    current_user_id = get_jwt_identity()
+    user_service = get_user_service()
+    usage_data = user_service.get_budget_usage(current_user_id)
+    return jsonify(usage_data), 200
 
 
 

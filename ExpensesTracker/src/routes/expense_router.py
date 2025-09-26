@@ -1,7 +1,5 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from pydantic import ValidationError
-
 from src.config.injections import get_expense_service
 from src.schemas.expense_schemas import AddExpense, DeleteExpense, UpdateExpense
 

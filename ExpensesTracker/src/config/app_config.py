@@ -14,7 +14,7 @@ from src.routes.user_router import user_bp
 
 def add_configuration(app: Flask):
     app.config['JWT_SECRET_KEY'] = Config.JWT_KEY
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=20)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=60)
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 

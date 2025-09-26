@@ -60,6 +60,8 @@ class UserService:
             "new_balance": new_balance
         }
 
+
+
     def __check_email(self, email: str):
         if self.users.get_user_by_email(email) is not None:
             raise UserAlreadyExistsError(f"User {email} already exists", 400)

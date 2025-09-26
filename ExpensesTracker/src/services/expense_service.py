@@ -1,7 +1,4 @@
-from flask import abort
-
-from exceptions.expense_exceptions import ExpenseNotFoundError, NotEnoughBalanceError, NoUpdatesFoundError, \
-    NoInfoFoundError
+from exceptions.expense_exceptions import *
 from exceptions.user_exceptions import UserNotFoundError
 from src.database.expenses_interface import ExpensesInterface
 from src.database.user_interface import UserInterface
