@@ -9,7 +9,7 @@ class CreateUser(BaseModel):
     last_name: str
     email: EmailStr
     password: str
-    initial_balance: float = 0
+    balance: float = 0
 
     @field_validator('first_name', 'last_name', mode='after')
     @classmethod
@@ -44,5 +44,5 @@ class UpdateUser(BaseModel):
     last_name: Optional[str] = Field(default=None, pattern=name_pattern)
     email: Optional[str] = Field(default=None, min_length=10)
     password: Optional[str] = Field(default=None, min_length=8)
-    initial_balance: Optional[float] = Field(default=None, gt=0)
+    balance: Optional[float] = Field(default=None, gt=0)
 

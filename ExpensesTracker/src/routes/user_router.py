@@ -27,7 +27,10 @@ def login():
     user_service = get_user_service()
     user_data = user_service.verify_user(user)
     access_token = create_access_token(identity=user_data['id'])
-    return jsonify(access_token=access_token), 200
+    return jsonify({
+        'access_token' : access_token,
+        'name': user_data['first_name'],
+    }), 200
 
 
 @user_bp.route('/update', methods=['PATCH'])
@@ -52,40 +55,13 @@ def fund_user_balance():
     return jsonify(result), 200
 
 
-@user_bp.route("/budget/set", methods=["POST"])
+@user_bp.route("/balance", methods=["GET"])
 @jwt_required()
-def set_budget():
-    current_user_id = get_jwt_identity()
-    data = request.get_json()
-
-    category = data.get("category")
-    amount = data.get("amount")
-
-    if not category or amount is None:
-        return jsonify({"error": "Category and amount are required"}), 400
-
-    user_service = get_user_service()
-    result = user_service.set_budget(current_user_id, category, float(amount))
-
-    return jsonify(result), 200
-
-@user_bp.route("/budget", methods=["GET"])
-@jwt_required()
-def get_budgets():
+def get_user_balance():
     current_user_id = get_jwt_identity()
     user_service = get_user_service()
-    budgets = user_service.get_budgets(current_user_id)
-    return jsonify(budgets), 200
-
-
-@user_bp.route("/budget/usage", methods=["GET"])
-@jwt_required()
-def get_budget_usage():
-    current_user_id = get_jwt_identity()
-    user_service = get_user_service()
-    usage_data = user_service.get_budget_usage(current_user_id)
-    return jsonify(usage_data), 200
-
+    user_data = user_service.get_user(current_user_id)
+    return jsonify({"balance": user_data['balance']}), 200
 
 
 @jwt.token_in_blocklist_loader

@@ -48,7 +48,7 @@ class Users(UserInterface):
     def update_balance(self, user_id: str, new_balance: float):
         result = self.user_collection.update_one(
             {"_id": ObjectId(user_id)},
-            {"$set": {"initial_balance": new_balance}},
+            {"$set": {"balance": new_balance}},
         )
         return result.modified_count == 1
 

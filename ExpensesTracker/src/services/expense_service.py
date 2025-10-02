@@ -15,12 +15,12 @@ class ExpenseService:
 
         if user_data is None:
             raise UserNotFoundError("User not found", 404)
-        if expense.amount > user_data["initial_balance"]:
+        if expense.amount > user_data["balance"]:
             raise NotEnoughBalanceError("You don't have enough money to add this expense", 400)
 
         self.users.update_balance(
             user_id=expense.user_id,
-            new_balance=user_data["initial_balance"] - expense.amount
+            new_balance=user_data["balance"] - expense.amount
         )
 
         return self.expenses.add_expense(expense)
@@ -56,7 +56,7 @@ class ExpenseService:
             new_amount = updates['amount']
             diff = old_amount - new_amount
 
-            new_balance = user_data["initial_balance"] + diff
+            new_balance = user_data["balance"] + diff
             if new_balance < 0:
                 raise NotEnoughBalanceError("You don't have enough money to add this expense", 400)
 
@@ -75,7 +75,7 @@ class ExpenseService:
 
         self.users.update_balance(
             user_id=delete.user_id,
-            new_balance=user_data["initial_balance"] + expense_data["amount"]
+            new_balance=user_data["balance"] + expense_data["amount"]
         )
 
         return self.expenses.delete_expense(delete.expense_id)

@@ -1,7 +1,4 @@
-from flask import abort
-
-from exceptions.user_exceptions import UserNotFoundError, InvalidAmountError, UserAlreadyExistsError, \
-    IncorrectPasswordError
+from exceptions.user_exceptions import *
 from src.database.user_interface import UserInterface
 from src.schemas.user_schemas import CreateUser, UpdateUser, LoginUser
 from src.utils.password import hash_password, verify_password
@@ -52,7 +49,7 @@ class UserService:
         if amount <= 0:
             raise InvalidAmountError("Funding amount must be greater than zero", 404)
 
-        new_balance = user_data["initial_balance"] + amount
+        new_balance = user_data["balance"] + amount
         self.users.update_balance(user_id=user_id, new_balance=new_balance)
 
         return {
